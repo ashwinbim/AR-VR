@@ -1,2 +1,15 @@
-Hello World!
-Hi 
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Embedding a GLB binary file</title>
+    <!-- Import the component -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+<!-- Use it like any other HTML element -->
+
+  </head>
+  <body>
+<model-viewer id="mv-demo" shadow-intensity="1" src="./home.glb"
+alt="A 3D model of aHome" auto-rotate camera-controls></model-viewer>
+  </body>
+</html>
