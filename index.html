@@ -1,38 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
+    <title>GLB Viewer</title>
     <meta charset="UTF-8">
-    <title>AR Viewer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <script src="https://cdn.rawgit.com/donmccurdy/aframe-gltf-part-component/v0.3.3/dist/aframe-gltf-part-component.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@spectorjs/core@1.0.0/dist/spector.bundle.js"></script>
   </head>
-  <body style="margin: 0;">
-    <a-scene embedded arjs>
+  <body>
+    <input type="file" id="fileInput">
+    <a-scene embedded>
       <a-assets>
         <a-asset-item id="model" src=""></a-asset-item>
       </a-assets>
-      <a-marker preset="hiro">
-        <a-gltf-model src="#model"></a-gltf-model>
-      </a-marker>
-      <a-entity camera></a-entity>
+      <a-gltf-model src="#model"></a-gltf-model>
     </a-scene>
-    <input type="file" accept=".glb" onchange="loadModel(this.files)">
     <script>
-      function loadModel(files) {
-        if (files && files.length > 0) {
-          const reader = new FileReader();
-          reader.onload = function() {
-            const gltf = JSON.parse(reader.result);
-            const modelUrl = URL.createObjectURL(new Blob([reader.result], {type: "application/octet-stream"}));
-            document.querySelector('#model').setAttribute('src', modelUrl);
-          }
-          reader.readAsText(files[0]);
-        }
-      }
+      const fileInput = document.getElementById('fileInput');
+      fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const url = URL.createObjectURL(file);
+        const model = document.getElementById('model');
+        model.setAttribute('src', url);
+      });
     </script>
   </body>
 </html>
