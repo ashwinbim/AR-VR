@@ -1,82 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>&lt;model-viewer&gt; example</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" href="demo-styles.css">
-    
-    <!-- The following libraries and polyfills are recommended to maximize browser support -->
-    <!-- NOTE: you must adjust the paths as appropriate for your project -->
-    
-    <!-- 💁 OPTIONAL: The :focus-visible polyfill removes the focus ring for some input types -->
-    <script src="./focus-visible.js" defer></script>
-
-  </head> 
-<body>
-  <div id="card">
-    <form enctype="multipart/form-data" method="POST">
-      <!-- Add a file input to allow users to upload a GLB file -->
-      <label for="glb_file">Choose a GLB file to visualize:</label>
-      <input type="file" id="glb_file" name="glb_file" accept=".glb">
-
-      <!-- Add a submit button to upload the file and display it using the <model-viewer> element -->
-      <input type="submit" value="Visualize">
-
-      <!-- Use PHP to handle the file upload and display the <model-viewer> element -->
-      <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-          $target_dir = "uploads/";
-          $target_file = $target_dir . basename($_FILES["glb_file"]["name"]);
-          $uploadOk = 1;
-          $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-          // Check if file already exists
-          if (file_exists($target_file)) {
-            echo "Sorry, file already exists.";
-            $uploadOk = 0;
+    <meta charset="UTF-8">
+    <title>AR Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
+    <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-gltf-part-component/v0.3.3/dist/aframe-gltf-part-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@spectorjs/core@1.0.0/dist/spector.bundle.js"></script>
+  </head>
+  <body style="margin: 0;">
+    <a-scene embedded arjs>
+      <a-assets>
+        <a-asset-item id="model" src=""></a-asset-item>
+      </a-assets>
+      <a-marker preset="hiro">
+        <a-gltf-model src="#model"></a-gltf-model>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+    <input type="file" accept=".glb" onchange="loadModel(this.files)">
+    <script>
+      function loadModel(files) {
+        if (files && files.length > 0) {
+          const reader = new FileReader();
+          reader.onload = function() {
+            const gltf = JSON.parse(reader.result);
+            const modelUrl = URL.createObjectURL(new Blob([reader.result], {type: "application/octet-stream"}));
+            document.querySelector('#model').setAttribute('src', modelUrl);
           }
-
-          // Allow only GLB files
-          if($imageFileType != "glb") {
-            echo "Sorry, only GLB files are allowed.";
-            $uploadOk = 0;
-          }
-
-          // Check if $uploadOk is set to 0 by an error
-          if ($uploadOk == 0) {
-            echo "Sorry, your file was not uploaded.";
-          } else {
-            if (move_uploaded_file($_FILES["glb_file"]["tmp_name"], $target_file)) {
-              // Display the <model-viewer> element with the uploaded GLB file
-              echo "<model-viewer src=\"./uploads/" . htmlspecialchars(basename($_FILES["glb_file"]["name"])) . "\"
-                                 alt=\"A 3D model uploaded by the user\"
-                                 shadow-intensity=\"1\"
-                                 camera-controls
-                                 auto-rotate></model-viewer>";
-            } else {
-              echo "Sorry, there was an error uploading your file.";
-            }
-          }
+          reader.readAsText(files[0]);
         }
-      ?>
-    </form>
-    
-    <section class="attribution">
-      <span>
-        <h1>ThreeAmigosSuccess!</h1>
-           </span>
-      <a class="(C)" href="https://www.jf.ag/en/" target="_blank">
-        <img src="./logo.png">
-      </a>
-    </section>
-    
-  </div>
-  <!-- Loads <model-viewer> for modern browsers: -->
-  <script type="module"
-      src="./model-viewer.min.js">
-  </script>
-</body>
+      }
+    </script>
+  </body>
 </html>
